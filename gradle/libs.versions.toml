@@ -1,0 +1,76 @@
+[versions]
+agp = "8.8.2"
+kotlin = "2.1.0"
+coreKtx = "1.15.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.10.1"
+composeBom = "2025.03.00"
+
+tensorflowLite = "2.9.0"
+tensorflowLiteGpu = "2.9.0"
+tensorflowLiteGpuDelegatePlugin = "0.4.0"
+tensorflowLiteTaskVision = "0.4.0"
+
+coilCompose = "3.0.4"
+#glideCompose = "1.0.0-beta01"
+navigationRuntimeKtx = "2.8.9"
+navigationCompose = "2.8.9"
+
+kspPlugin = "2.1.0-1.0.29"
+viewModel = "2.8.7"
+
+hiltCommon = "1.2.0"
+hilt= "2.55"
+
+splashScreen = "1.1.0-rc01"
+
+gson = "2.10.1"
+hiltNavigationCompose = "1.2.0"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
+tensorflow-lite-gpu = { module = "org.tensorflow:tensorflow-lite-gpu", version.ref = "tensorflowLiteGpu" }
+tensorflow-lite-gpu-delegate-plugin = { module = "org.tensorflow:tensorflow-lite-gpu-delegate-plugin", version.ref = "tensorflowLiteGpuDelegatePlugin" }
+tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+#glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+
+
+lifecycle-viewmodel = { group = "androidx.lifecycle", name ="lifecycle-viewmodel", version.ref = "viewModel"}
+hilt-android = { group="com.google.dagger", name="hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group="com.google.dagger", name="hilt-android-compiler", version.ref = "hilt" }
+hilt-common = { group="androidx.hilt", name="hilt-common", version.ref = "hiltCommon" }
+
+
+core-splashscreen = { group = "androidx.core", name ="core-splashscreen", version.ref = "splashScreen"}
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref="kspPlugin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
