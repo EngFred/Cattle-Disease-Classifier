@@ -1,26 +1,23 @@
 package com.engineerfred.nassa
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,8 +33,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,31 +43,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.engineerfred.nassa.ui.theme.TextPrimaryDark
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QAScreen(
     onBack: () -> Unit,
-    faqList: List<FAQ>
+    darkTheme: Boolean,
+    viewModel: QAViewModel = hiltViewModel()
 ) {
 
-//    val keyboardController = LocalSoftwareKeyboardController.current
-    val messages = remember { mutableStateListOf<Message>() }
+    val messages by remember { derivedStateOf { viewModel.messages } }
+    val isTyping by viewModel.isTyping
+
     val listState = rememberLazyListState()
+
+    val containerColor = if (darkTheme) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Question Answer", color = TextPrimaryDark) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
                 navigationIcon = {
-                    IconButton( onClick = onBack ) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
@@ -79,15 +82,12 @@ fun QAScreen(
                 }
             )
         },
-        bottomBar = { MessageInputField(
-            onSendMessage = { userInput ->
-//                keyboardController?.hide()
-                messages.add(Message(userInput, isUser = true))
-
-                val botResponse = findBestAnswer(userInput, faqList)
-                messages.add(Message(botResponse, isUser = false))
-            }
-        ) }
+        bottomBar = {
+            MessageInputField(
+                onSendMessage = { viewModel.sendMessage(it) },
+                isTyping = isTyping
+            )
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -106,6 +106,11 @@ fun QAScreen(
                 ) {
                     items(messages) { message ->
                         ChatBubble(message)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    if (isTyping) {
+                        item { TypingIndicator() }
                     }
                 }
 
@@ -120,34 +125,59 @@ fun QAScreen(
 
 @Composable
 fun ChatBubble(message: Message) {
-    val bubbleColor = if (message.isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-    val alignment = if (message.isUser) Alignment.End else Alignment.Start
-    val textColor = if (message.isUser) Color.White else Color.Black
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = alignment
+    val isError = message.text.contains("Oops! Something went wrong.")
+    val bubbleColor = when {
+        isError -> Color(0xFFFFE0E0)
+        message.isUser -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.secondary
+    }
+    val textColor = if (isError) Color.Red else Color.White
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
     ) {
-        Text(
-            text = message.text,
-            color = textColor,
-            style = MaterialTheme.typography.bodyLarge,
+        Box(
             modifier = Modifier
+                .padding(horizontal = 8.dp)
                 .background(bubbleColor, shape = RoundedCornerShape(16.dp))
-                .padding(12.dp)
-                .wrapContentWidth()
-                .defaultMinSize(minWidth = 64.dp)
-                .padding(4.dp)
-        )
+                .padding(8.dp)
+                .widthIn(max = 280.dp)
+        ) {
+            Text(
+                text = parseMarkdownToAnnotatedString(message.text),
+                color = textColor,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun TypingIndicator() {
+    var dotCount by remember { mutableIntStateOf(1) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(500)
+            dotCount = (dotCount + 1) % 4
+        }
     }
 
-    Spacer(modifier = Modifier.height(8.dp))
+    val dots = ".".repeat(dotCount)
+    ChatBubble(Message("Replying$dots", isUser = false))
 }
+
 
 @Composable
 fun MessageInputField(
     modifier: Modifier = Modifier,
-    onSendMessage: (String) -> Unit
+    onSendMessage: (String) -> Unit,
+    isTyping: Boolean
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -187,7 +217,7 @@ fun MessageInputField(
 
         IconButton(
             onClick = {
-                if (text.isNotBlank()) {
+                if (text.isNotBlank() && isTyping.not()) {
                     onSendMessage(text)
                     text = ""
                 }
@@ -207,12 +237,6 @@ fun MessageInputField(
 }
 
 
-data class Message(val text: String, val isUser: Boolean)
-
-fun findBestAnswer(userQuery: String, faqList: List<FAQ>): String {
-    return faqList.firstOrNull { it.question.contains(userQuery, ignoreCase = true) }?.answer
-        ?: "Sorry, I couldn't find an answer for that."
-}
 
 @Composable
 fun EmptyChatUI() {
@@ -227,7 +251,7 @@ fun EmptyChatUI() {
             painter = painterResource(R.drawable.ic_message),
             contentDescription = "Empty Chat",
             modifier = Modifier
-                .size(150.dp)
+                .size(130.dp)
                 .padding(bottom = 16.dp)
         )
 

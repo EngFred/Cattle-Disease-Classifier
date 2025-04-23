@@ -13,6 +13,10 @@
         tools:ignore="SelectedPhotoAccess" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
+<!--    <uses-native-library android:name="libOpenCL.so" android:required="false"/>-->
+<!--    <uses-native-library android:name="libOpenCL-car.so" android:required="false"/>-->
+<!--    <uses-native-library android:name="libOpenCL-pixel.so" android:required="false"/>-->
+
     <application
         android:name=".CattleDiseaseDiagnosticApp"
         android:allowBackup="true"

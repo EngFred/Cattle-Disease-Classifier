@@ -23,8 +23,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val faqList = loadFAQData(applicationContext)
-
         setContent {
 
             val diagnosticViewModel: DiagnosticViewModel = hiltViewModel()
@@ -43,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         prefsManager.setFirstLaunchFalse()
                     },
                     isFirstLaunch = prefsManager.isFirstLaunch(),
-                    faqList = faqList
+                    darkTheme = darkTheme
                 )
             }
         }

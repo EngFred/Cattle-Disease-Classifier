@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -10,6 +12,9 @@ android {
     namespace = "com.engineerfred.nassa"
     compileSdk = 35
 
+    val localProperties = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
+    val apiKey = localProperties.getProperty("apiKey") ?: ""
+
     defaultConfig {
         applicationId = "com.engineerfred.nassa"
         minSdk = 24
@@ -18,12 +23,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "apiKey", "\"$apiKey\"")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,6 +44,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -88,5 +95,7 @@ dependencies {
     //gson
     implementation(libs.gson)
 
-
+    //gemini
+//    implementation(libs.tasks.genai)
+    implementation(libs.generativeai)
 }

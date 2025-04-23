@@ -20,13 +20,13 @@ fun Uri.toBitmap(context: Context): Bitmap? {
     }
 }
 
-fun loadFAQData(context: Context): List<FAQ> {
-    return try {
-        val jsonString = context.assets.open("faq.json").bufferedReader().use { it.readText() }
-        val listType = object : TypeToken<List<FAQ>>() {}.type
-        Gson().fromJson(jsonString, listType)
-    } catch (e: IOException) {
-        e.printStackTrace()
-        emptyList()
-    }
-}
+//fun loadFAQData(context: Context): List<FAQ> {
+//    return try {
+//        val jsonString = context.assets.open("faq.json").bufferedReader().use { it.readText() }
+//        val listType = object : TypeToken<List<FAQ>>() {}.type
+//        Gson().fromJson(jsonString, listType)
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//        emptyList()
+//    }
+//}

@@ -18,8 +18,8 @@ fun AppGraph(
     viewModel: DiagnosticViewModel,
     onSaveFirstLaunch: () -> Unit,
     isFirstLaunch: Boolean,
-    faqList: List<FAQ>,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    darkTheme: Boolean
 ) {
 
     val startDestination = if ( isFirstLaunch ) "welcome" else "diagonalise"
@@ -66,7 +66,7 @@ fun AppGraph(
             },
             route = "qa",
         ){
-            QAScreen( onBack = { navController.navigateUp() }, faqList = faqList)
+            QAScreen( onBack = { navController.navigateUp() }, darkTheme = darkTheme)
         }
         composable("diagonalise"){
             DiagnosticScreen(
@@ -75,7 +75,8 @@ fun AppGraph(
                         launchSingleTop = true
                     }
                 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                darkTheme = darkTheme
             )
         }
     }

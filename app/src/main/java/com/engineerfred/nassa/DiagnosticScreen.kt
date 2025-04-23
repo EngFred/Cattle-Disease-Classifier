@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,11 +61,14 @@ import com.engineerfred.nassa.ui.theme.TextPrimaryDark
 @Composable
 fun DiagnosticScreen(
     onAskClicked: () -> Unit,
-    viewModel: DiagnosticViewModel
+    viewModel: DiagnosticViewModel,
+    darkTheme: Boolean
 ) {
     val context = LocalContext.current
 
     val uiState = viewModel.uiState.collectAsState().value
+
+    val containerColor = if(darkTheme) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
 
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -100,7 +104,7 @@ fun DiagnosticScreen(
             TopAppBar(
                 title = {
                     Text("Cattle Disease Classifier", color = TextPrimaryDark) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
                 actions = {
                     IconButton(onClick = {
                         viewModel.updateDialogVisibility()
@@ -187,9 +191,9 @@ fun DiagnosticScreen(
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Icon(painter = painterResource(R.drawable.ic_camera), contentDescription = "Camera")
+                    Icon(painter = painterResource(R.drawable.ic_camera), contentDescription = "Camera", tint = TextPrimaryDark)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Open Camera", fontSize = 16.sp)
+                    Text("Open Camera", fontSize = 16.sp, color = TextPrimaryDark)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -213,9 +217,9 @@ fun DiagnosticScreen(
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                 ) {
-                    Icon(painter = painterResource(R.drawable.ic_gallery), contentDescription = "Gallery")
+                    Icon(painter = painterResource(R.drawable.ic_gallery), contentDescription = "Gallery", tint = TextPrimaryDark)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Select from Gallery", fontSize = 16.sp)
+                    Text("Select from Gallery", fontSize = 16.sp, color = TextPrimaryDark)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -271,7 +275,7 @@ fun DiagnosticScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .background(
-                        MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(12.dp)
